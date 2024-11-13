@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- load all packages -->
+    <link rel="apple-touch-icon" sizes="180x180" href="static/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon/favicon-16x16.png">
+    <link rel="manifest" href="static/favicon/site.webmanifest">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+    <link rel="stylesheet" href="static/assets/leaflet/leaflet.css">
+    <script src="static/assets/leaflet/leaflet.js"></script>
+    <script src="static/assets/leaflet.ajax.min.js"></script>
+    <script src="static/assets/jquery.min.js"></script>
+    <link rel="stylesheet" href="static/assets/control_geocoder/Control.Geocoder.css" />
+    <script src="static/assets/control_geocoder/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="static/assets/leaflet_measure/Leaflet.PolylineMeasure.css" />
+    <script src="static/assets/leaflet_measure/Leaflet.PolylineMeasure.js"></script>
+    <link rel="stylesheet" href="static/assets/visual_click/L.VisualClick.css" />
+    <script src="static/assets/visual_click/L.VisualClick.js"></script>
+    <script src="static/assets/d3-hexbin.v0.2.min.js"></script>
+    <script src="static/assets/leaflet-d3.js" charset="utf-8"></script>
+    <script src="static/assets/popper.min.js" charset="utf-8"></script>
+    <script src="static/assets/leaflet_fullscreen/leaflet.fullscreen.min.js"></script>
+    <link href="static/assets/leaflet_fullscreen/leaflet.fullscreen.css" rel="stylesheet" />
+    <link rel="stylesheet" href="static/assets/main.css" />
+    <link rel="stylesheet" href="static/assets/font-awesome/css/all.css" />
+    <link rel="stylesheet" href="static/assets/BigImage/Leaflet.BigImage.min.css">
+    <script src="static/assets/BigImage/Leaflet.BigImage.min.js"></script>
+    <script src="static/assets/papaparse.min.js"></script>
+    <script src="static/assets/bootstrap/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="static/assets/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="static/assets/font-awesome/all.min.css" />
+
+    <script src="static/assets/d3.v5.min.js" charset="utf-8"></script>
+    <script src="static/assets/d3-hexbin.v0.2.min.js"></script>
+    <script src="static/assets/leaflet-d3.js" charset="utf-8"></script>
+    <script src="static/assets/simple-statistics-7-8-3.min.js" charset="utf-8"></script>
+    <script src="static/assets/pako.min.js" charset="utf-8"></script>
+    <script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.0.17/leaflet-maplibre-gl.js"></script>
+    <script src="https://unpkg.com/protomaps-leaflet@4.0.0/dist/protomaps-leaflet.js"></script>
+    <script src="https://unpkg.com/underscore@1.13.1/underscore-min.js"></script>
+    <script src="https://unpkg.com/flatgeobuf@3.32.0/dist/flatgeobuf-geojson.min.js"></script>
+    <script src="https://unpkg.com/json-formatter-js"></script>
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css"
+    />
+    <script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Semantic hexagonal on-the-fly binning metrics for city-scale georeferenced social media data</title>
+
+</head>
+
+<body>
+    <script src="static/assets/bootstrap/bootstrap.bundle.min.js"></script>
+
+    <script type="module">
+        import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+        // Expose the pipeline function to the global scope, dirty hack to postpone complete rewrite to ES6
+        const extractor = await pipeline('feature-extraction', 'Xenova/bge-m3');
+
+        // test function without dynamic embedding calculation for quick tests on low-bandwidth networks (e.g. airport)
+        //function extractor(){return [ 0, 0, -0.04, -0.02, -0.02, -0.03, 0.03, -0.02, 0.01, -0.01, 0, -0.03, 0.03, -0.01, 0.02, -0.01, 0, -0.03, -0.01, -0.02, -0.04, 0.04, 0, 0.01, -0.02, -0.01, -0.01, -0.04, -0.03, -0.03, -0.04, -0.01, 0.08, -0.01, 0.02, -0.04, -0.03, 0, -0.08, 0.02, -0.02, -0.02, 0.01, -0.04, 0.03, -0.04, -0.01, 0.01, 0.03, -0.04, 0, 0.02, 0.03, -0.02, -0.03, 0.05, -0.03, -0.04, -0.06, -0.01, -0.01, -0.01, 0.01, -0.01, -0.01, 0.08, 0.04, 0, 0, -0.02, 0.02, 0.01, 0, -0.02, -0.07, 0.01, 0.04, 0, 0.05, 0.05, -0.04, -0.05, -0.01, -0.03, -0.04, 0.02, 0.03, 0, 0.02, -0.03, -0.02, 0, 0.01, -0.04, -0.01, -0.01, -0.04, 0, 0.01, 0.04, 0.04, 0.05, 0, -0.03, -0.02, -0.02, -0.03, 0, 0.02, 0.01, 0, 0.02, 0, 0.04, 0.01, -0.02, 0.02, 0.01, -0.03, -0.01, 0.04, 0.05, 0.03, -0.04, -0.03, 0, 0.04, 0.03, -0.02, 0.01, -0.01, 0, 0, -0.03, 0.02, -0.05, 0.03, -0.05, -0.02, -0.03, -0.01, 0.02, 0.01, 0, 0, -0.07, 0.04, 0.02, 0.03, 0.02, 0.03, -0.03, 0.01, 0.05, 0.01, 0, -0.04, 0.02, 0.04, -0.05, 0.02, -0.02, 0.03, 0.02, 0.06, -0.02, -0.01, 0.04, 0.02, 0.02, -0.01, -0.06, 0.05, 0.04, 0, 0.02, 0.07, 0.01, -0.04, -0.04, -0.01, 0, -0.05, -0.04, 0.02, 0, -0.04, -0.02, 0.02, 0.03, 0, -0.01, -0.02, 0, 0.01, -0.01, 0.01, -0.01, -0.01, 0, -0.04, 0.02, 0.04, 0.02, -0.01, -0.01, 0, -0.03, -0.02, 0.01, 0.01, 0.03, -0.03, -0.07, -0.01, -0.01, 0, -0.02, 0.02, -0.02, -0.02, 0.03, 0.02, 0, 0.02, -0.01, 0.02, 0, 0.08, -0.01, -0.02, -0.03, 0, 0, 0.03, 0.02, -0.04, 0.02, 0.04, -0.06, -0.02, -0.02, 0.05, 0.01, -0.04, 0.05, 0.04, 0.04, -0.01, 0.01, 0.02, 0.03, -0.03, -0.01, 0.03, 0, 0.01, 0.02, 0.01, -0.03, -0.01, 0.01, -0.02, 0.03, -0.02, -0.06, -0.03, -0.02, 0, 0, -0.02, -0.01, 0.01, -0.02, 0.04, 0.06, -0.01, -0.03, 0.04, 0.04, -0.04, 0.04, 0.03, 0.02, 0.04, -0.04, -0.04, 0, -0.05, -0.06, 0.03, 0.03, 0.08, 0, -0.04, 0.02, -0.01, -0.14, 0.02, 0.01, 0.08, 0, 0, -0.02, 0.04, -0.02, -0.02, 0.01, -0.06, -0.01, 0.01, -0.06, -0.01, 0.02, -0.03, 0.03, -0.04, -0.03, -0.06, 0.02, 0.01, -0.05, 0, 0.04, -0.02, -0.03, 0.01, -0.02, 0.06, -0.01, 0, -0.01, -0.05, 0.03, -0.02, -0.03, 0.03, 0, 0.05, -0.03, 0.04, 0.05, -0.04, 0.02, 0.02, 0.03, -0.02, 0, -0.02, 0.01, -0.03, -0.07, 0, -0.05, 0, 0.04, -0.01, 0, -0.08, 0.03, -0.04, 0, -0.06, 0, -0.02, 0.01, -0.02, 0.02, -0.05, 0, 0.03, 0, -0.01, -0.03, -0.01, -0.02, -0.08, -0.07, 0, -0.04, -0.02, -0.02, -0.02, 0.05, 0.01, 0.04, 0.18, 0, 0.02, -0.03, 0.07, 0.01, 0.02, 0.04, -0.02, -0.02, 0.01, 0.01, -0.01, 0, 0.04, 0.01, -0.07, -0.02, 0.09, -0.03, -0.02, 0.01, 0, -0.05, -0.03, -0.02, 0.01, -0.01, 0.02, 0.05, -0.02, -0.01, 0.06, -0.01, 0.01, 0, 0.02, -0.02, 0.01, 0.02, 0.01, -0.03, 0, 0.03, 0.01, -0.02, 0.04, 0.01, -0.03, -0.01, 0.03, -0.04, 0.03, 0.02, -0.02, -0.01, -0.04, -0.01, -0.04, 0.06, 0.08, 0.02, -0.07, -0.01, 0.05, 0.03, -0.04, -0.01, 0.02, 0.03, 0.02, -0.01, -0.01, 0.03, 0.01, -0.02, 0, 0, 0.05, 0.01, 0.02, -0.01, 0.02, -0.02, 0.02, 0, 0, 0.01, 0.01, -0.01, -0.01, 0.01, -0.01, 0, -0.03, -0.02, 0.07, 0.02, -0.02, 0, 0.01, -0.02, -0.01, -0.04, 0.06, 0.05, 0.01, -0.02, -0.03, 0.05, -0.01, 0.01, 0.03, -0.03, 0.01, 0.01, 0, 0.03, 0.04, 0.01, -0.03, 0.08, -0.02, 0.04, -0.01, -0.01, 0.02, -0.01, -0.02, 0.01, 0, -0.02, -0.05, 0.04, 0.01, 0, -0.01, -0.01, 0.02, 0.01, -0.01, 0.04, -0.02, 0.03, 0, 0.01, -0.04, 0, -0.01, 0.01, 0.03, 0, 0.04, -0.04, 0, -0.01, -0.05, 0, 0.03, -0.03, 0.01, 0.08, 0.03, 0.09, -0.05, 0.04, 0.01, 0, -0.01, 0.05, 0.02, 0, -0.03, 0, -0.04, -0.04, -0.01, 0.02, 0.04, 0.01, -0.01, 0.01, 0.01, 0.04, 0.04, 0.04, 0, -0.03, 0.04, -0.02, 0, 0.06, 0.06, -0.02, 0.05, 0.04, 0.03, 0.02, 0.03, 0.02, -0.02, -0.02, 0.03, -0.01, -0.03, 0, -0.02, 0.03, 0, -0.01, -0.01, 0.01, -0.05, 0.03, 0, -0.02, -0.02, 0.04, -0.01, 0.01, 0.01, 0.02, 0.02, -0.03, -0.02, -0.01, 0.01, 0.03, 0.02, 0.01, 0.01, -0.04, 0.01, -0.03, 0.04, 0.02, -0.02, 0.03, -0.02, -0.02, 0.03, -0.04, -0.02, -0.03, 0.02, 0, -0.02, -0.05, -0.03, 0.04, -0.05, -0.01, 0.03, -0.06, 0.01, 0.02, -0.02, -0.01, -0.03, 0, 0, 0.07, 0, -0.05, -0.01, -0.04, 0.05, 0, -0.03, 0.01, -0.02, 0, -0.03, 0, 0.05, 0.02, -0.06, 0.05, -0.03, 0.01, -0.05, 0, 0.02, 0.03, -0.01, 0.04, 0.06, 0.05, -0.01, -0.02, 0.02, -0.01, -0.05, -0.04, -0.02, 0, 0, 0.01, -0.01, -0.01, -0.04, 0.05, -0.02, 0.01, 0.02, -0.01, 0.03, -0.07, 0.01, -0.01, 0.04, -0.06, -0.01, 0.02, 0.03, -0.01, 0.01, 0.01, -0.02, -0.01, -0.05, 0.01, -0.01, 0.01, 0.01, 0.04, -0.01, 0.02, -0.02, -0.04, -0.02, 0, -0.02, -0.01, 0.01, 0.01, 0.06, 0.06, -0.01, 0.01, -0.05, -0.05, 0.06, 0, -0.01, -0.03, -0.02, 0, -0.01, -0.01, -0.02, 0.03, -0.02, -0.06, 0.02, 0.07, 0.03, 0, 0, 0, -0.02, 0, 0.02, 0, 0, 0, -0.05, -0.04, 0.03, 0.01, 0.01, 0.02, 0.01, 0.01, -0.07, 0.03, 0, 0.02, 0.02, -0.03, -0.01, -0.02, 0.01, -0.02, 0.02, -0.06, 0, 0.02, 0.04, 0.07, 0, 0, 0.01, -0.03, -0.14, 0, 0.01, -0.02, -0.03, 0.02, -0.03, 0, -0.04, -0.04, 0.02, 0.01, 0.06, -0.03, -0.01, 0.03, -0.02, -0.03, 0.01, 0.09, -0.02, 0.01, 0.04, 0.05, 0, -0.05, -0.02, -0.06, -0.04, 0.03, -0.02, -0.06, -0.01, 0, 0.06, 0.04, 0.01, -0.01, -0.02, -0.04, 0, 0.01, 0, -0.02, -0.02, 0.04, 0, 0, 0, -0.02, 0.01, 0.02, -0.05, 0.06, -0.01, -0.04, 0, 0.02, 0.01, 0.06, -0.05, 0.01, 0.01, 0, -0.01, 0, 0, 0.03, 0, 0.05, -0.02, -0.01, 0.03, -0.04, 0.02, -0.01, 0, -0.04, -0.04, -0.03, -0.03, -0.02, 0.01, -0.02, -0.02, -0.02, -0.01, -0.02, 0, 0.05, -0.05, -0.06, 0.03, 0.04, -0.03, 0.05, -0.02, -0.03, 0, -0.03, -0.01, -0.04, -0.03, -0.01, -0.02, 0.05, -0.01, -0.04, -0.02, -0.02, -0.04, -0.02, 0.05, -0.01, -0.06, 0, 0, 0.04, 0.01, 0.01, 0.01, -0.07, 0, -0.04, 0.01, 0.02, 0.05, 0.04, -0.01, 0.03, 0.01, -0.05, 0.01, -0.02, 0.02, 0.01, 0, 0.03, -0.02, -0.03, -0.02, 0, -0.06, 0, 0, 0.01, -0.03, 0, 0.01, -0.02, 0, -0.03, 0.01, 0.07, 0.02, 0.01, -0.02, 0, 0.04, 0.03, -0.01, 0, -0.07, -0.05, -0.03, 0.09, -0.01, 0.01, -0.02, -0.02, 0.03, 0.01, -0.03, -0.01, -0.02, 0.06, 0.02, 0.01, -0.02, -0.05, 0.02, 0.02, 0, 0, -0.03, 0.02, 0, -0.01, -0.02, 0.02, 0.03, -0.01, 0.05, 0.02, 0.01, 0.06, 0.02, 0.01, -0.03, -0.03, -0.04, 0.02, -0.02, -0.04, -0.01, 0, 0.03, -0.05, -0.02, -0.03, -0.05, -0.03, 0.03, 0.02, 0.02, 0.03, 0.05, -0.04, 0.03, 0.03, 0.04, 0, -0.02, -0.03, 0.02, 0, -0.01, 0.07, 0, -0.03, -0.02, 0, -0.01, -0.01, -0.02, -0.01, 0.05, 0, -0.04, 0, 0.03, 0.02, 0.03, -0.02 ]}     
+        window.extractor = extractor;
+    </script>
+
+    <script src="static/assets/main.js"></script>
+
+    <div id="map">
+        <div id="spinner"></div>
+    </div>
+
+    <button id="toggle_sidebar_button" class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling"><i
+            class="fa fa-chevron-right fa-xl"></i></button>
+
+    <div class="offcanvas offcanvas-start show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1"
+        id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel" data-bs-theme="dark">
+        <div class="offcanvas-header">
+            <h4 class="offcanvas-title" id="offcanvasScrollingLabel">Semantic Hexbins - Overturemaps Places</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body">
+            <details>
+                <summary>Info</summary>
+                <p>A lightweight frontend app using <a href="https://github.com/xenova/transformers.js"
+                        target="_blank">transformers.js</a> showcasing the use of semantic similarity for geospatial
+                    applications such as geosocial media. Data source: Overturemaps Places.</p>
+                <p>Made by <a href="https://geo.rocks/about/">Dominik Weckmüller</a>. I'm a scientist and freelancer
+                    specialized in GIS, NLP and web applications. I’m available for freelance work, corporate &
+                    scientific collaboration. <a href="https://www.linkedin.com/in/dominik-weckm%C3%BCller/"
+                        target="_blank">Get in touch!</a></p>
+                <p>More details in the soon to be published paper or in this <a
+                        href="https://mapscaping.com/podcast/semantic-search-for-geospatial/" target="_blank">Mascaping
+                        Episode</a>. <a href="https://github.com/do-me/semantic-hexbins">GitHub</a>. Also check out <a
+                        href="https://do-me.github.io/SemanticFinder/" target="_blank">SemanticFinder</a>! </p>
+            </details>
+            <details>
+                <summary>Supported query languages (173)</summary>
+                Languages <a href="https://huggingface.co/BAAI/bge-m3" target="_blank">BAAI/bge-m3</a> was trained on.
+                Source <a href="https://huggingface.co/BAAI/bge-m3/discussions/29" target="_blank">here</a>. The larger
+                the amount of training data, the better the language should work.<br>
+                <hr>
+                af Afrikaans<br>als Alemannic<br>am Amharic<br>an Aragonese<br>ar Arabic<br>arz Egyptian Arabic<br>as
+                Assamese<br>ast Asturian<br>av Avaric<br>az Azerbaijani<br>azb South Azerbaijani<br>ba Bashkir<br>bar
+                Bavarian<br>bcl Central Bikol<br>be Belarusian<br>bg Bulgarian<br>bh Bihari<br>bn Bengali<br>bo
+                Tibetan<br>bpy Bishnupriya Manipuri<br>br Breton<br>bs Bosnian<br>bxr Buryat (Russia)<br>ca
+                Catalan<br>cbk Chavacano<br>ce Chechen<br>ceb Cebuano<br>ckb Sorani Kurdish<br>co Corsican<br>cs
+                Czech<br>cv Chuvash<br>cy Welsh<br>da Danish<br>de German<br>diq Zazaki<br>dsb Lower Sorbian<br>dty
+                Dotyali<br>dv Dhivehi<br>el Greek<br>eml Emiliano-Romagnolo<br>en English<br>eo Esperanto<br>es
+                Spanish<br>et Estonian<br>eu Basque<br>fa Persian<br>fi Finnish<br>fr French<br>fy Western Frisian<br>ga
+                Irish<br>gd Scottish Gaelic<br>gl Galician<br>gn Guarani<br>gom Konkani<br>gu Gujarati<br>gv Manx<br>he
+                Hebrew<br>hi Hindi<br>hif Fiji Hindi<br>hr Croatian<br>hsb Upper Sorbian<br>ht Haitian Creole<br>hu
+                Hungarian<br>hy Armenian<br>ia Interlingua<br>id Indonesian<br>ie Interlingue<br>ilo Ilocano<br>io
+                Ido<br>is Icelandic<br>it Italian<br>ja Japanese<br>jbo Lojban<br>jv Javanese<br>ka Georgian<br>kk
+                Kazakh<br>km Khmer<br>kn Kannada<br>ko Korean<br>krc Karachay-Balkar<br>ku Kurdish<br>kv Komi<br>kw
+                Cornish<br>ky Kyrgyz<br>la Latin<br>lb Luxembourgish<br>lez Lezghian<br>li Limburgish<br>lmo
+                Lombard<br>lo Lao<br>lt Lithuanian<br>lv Latvian<br>mai Maithili<br>mg Malagasy<br>mhr Eastern
+                Mari<br>min Minangkabau<br>mk Macedonian<br>ml Malayalam<br>mn Mongolian<br>mr Marathi<br>mrj Western
+                Mari<br>ms Malay<br>mt Maltese<br>mwl Mirandese<br>my Burmese<br>myv Erzya<br>mzn Mazanderani<br>nah
+                Nahuatl<br>nap Neapolitan<br>nds Low German<br>ne Nepali<br>new Newari<br>nl Dutch<br>nn Norwegian
+                Nynorsk<br>no Norwegian<br>oc Occitan<br>or Odia<br>os Ossetian<br>pa Punjabi<br>pam Pampanga<br>pfl
+                Palatine German<br>pl Polish<br>pms Piedmontese<br>pnb Western Panjabi<br>ps Pashto<br>pt
+                Portuguese<br>qu Quechua<br>rm Romansh<br>ro Romanian<br>ru Russian<br>sa Sanskrit<br>sah Sakha<br>sc
+                Sardinian<br>scn Sicilian<br>sco Scots<br>sd Sindhi<br>sh Serbo-Croatian<br>si Sinhala<br>sk
+                Slovak<br>sl Slovene<br>so Somali<br>sq Albanian<br>sr Serbian<br>su Sundanese<br>sv Swedish<br>sw
+                Swahili<br>ta Tamil<br>te Telugu<br>tg Tajik<br>th Thai<br>tk Turkmen<br>tl Tagalog<br>tr Turkish<br>tt
+                Tatar<br>tyv Tuvan<br>ug Uyghur<br>uk Ukrainian<br>ur Urdu<br>uz Uzbek<br>vec Venetian<br>vep
+                Vepsian<br>vi Vietnamese<br>vls West Flemish<br>vo Volapük<br>wa Walloon<br>war Waray<br>wuu Wu
+                Chinese<br>xal Kalmyk<br>xmf Mingrelian<br>yi Yiddish<br>yo Yoruba<br>yue Cantonese<br>zh Chinese
+            </details>
+            
+            <br>
+            <h5><label for="queryText" data-toggle="tooltip"
+                    title="Semantically query anything in more than 116 languages, like basketball, Χαλάρωση, ciorba, fodbold, Beethoven, Natur, 樱花, ristorante italiano or vin rouge. This is not full-text search but exclusively relying on semantic similarity.">Query
+                    (semantic similarity, BAAI/bge-m3) <a href=""></a></label>
+            </h5>
+            <textarea class="form-control" id="queryText" rows="1">Tasty food</textarea>
+            <br>
+            <button type="button" id="queryData" class="btn btn-primary" title="Query already loaded data" disabled>🔍 Query Data</button>
+            <button type="button" id="queryDataWithLoad" class="btn btn-primary" title="Load data for full map extent" disabled>⬇️ Load Data</button>
+            <br>
+            <br>
+            <details open="">
+
+                <summary>Settings</summary>
+
+                <div id="radiusSettings">
+                    <h5><label for="radiusRadioButtons" data-toggle="tooltip"
+                            title="Toggle between a fixed radius (default) and a radius size growing with the absolute number topic posts in the hexbin.">Radius</label>
+                    </h5>
+                    <div id="radiusRadioButtons">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radiusRadio" id="fixedRadius"
+                                value="fixedRadius" checked>
+                            <label class="form-check-label" for="fixedRadius">
+                                Fixed
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radiusRadio" id="postsMatchRadius"
+                                value="postsMatchRadius">
+                            <label class="form-check-label" for="postsMatchRadius">
+                                Posts above minimum similarity score
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="radiusRadio" id="totalPosts"
+                                value="totalPosts">
+                            <label class="form-check-label" for="totalPosts">
+                                All posts
+                            </label>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+
+                <div id="colorScaleSlider" data-role="rangeslider">
+                    <div class="d-flex">
+                        <h5><label for="margin" class="d-inline-block" data-toggle="tooltip"
+                                title="Sets the color scale extent, i.e. for this range, the colors are equally distributed. Important as different models have different default ranges.">Color
+                                scale extent</label></h5>
+                    </div>
+
+                    <h6>Lower bounds (default: median)</h6>
+                    <div class="d-flex">
+                        <input type="number" class="form-control" id="minScale" min="0" max="1" step="0.001" value="0">
+                        <input type="range" class="form-control-range" id="minScaleRange" min="0" max="1" step="0.01"
+                            value="0.8">
+                    </div>
+
+                    <h6>Upper bounds (default: max)</h6>
+                    <div class="d-flex">
+                        <input type="number" class="form-control" id="maxScale" min="0" max="1" step="0.001" value="1">
+                        <input type="range" class="form-control-range" id="maxScaleRange" min="0" max="1" step="0.01"
+                            value="0.89">
+                    </div>
+
+                    <br>
+                </div>
+
+                <div class="d-flex">
+                    <h5><label for="margin" class="d-inline-block" data-toggle="tooltip"
+                            title="Move the slider to the right to see most extreme posts that are much above median.">
+                            Minimum similarity score</label></h5>
+                </div>
+                <div class="d-flex">
+                    <input type="number" class="form-control" id="minScore" min="0" max="1" step="0.001" value="0">
+                    <input type="range" class="form-control-range" id="minScoreRange" min="0" max="1" step="0.01"
+                        value="0">
+                </div>
+
+                <div class="d-flex">
+                    <h5><label for="margin" class="d-inline-block" data-toggle="tooltip"
+                            title="Move the slider to the right to see only hexbins with lots of related posts.">
+                            Minimum number of above scores in hexbin</label></h5>
+                </div>
+                <div class="d-flex">
+                    <input type="number" class="form-control" id="minScoreQuantity" min="1" max="100000" step="1"
+                        value="1">
+                    <input type="range" class="form-control-range" id="minScoreQuantityRange" min="1" max="1000"
+                        step="1" value="3">
+                </div>
+
+                <div id="min_max_mean_median_container">
+                <h5><label for="dataFile" data-toggle="tooltip"
+                    title="Select binning function for hexbin. Max is most likely what you're looking for as it behaves intuitively. You'll see a wild 'color jumping' across zoom levels if you select other functions here.">Binning function</label>
+                </h5>
+                <label for="min_max_mean_median">Select Statistic:</label>
+                <select id="min_max_mean_median" class="form-select">
+                    <option value="min">Min</option>
+                    <option selected value="max">Max</option>
+                    <option value="mean">Mean</option>
+                    <option value="median">Median</option>
+                    <option value="range">Range</option>
+                    <option value="mad">MAD (Mean Absolute Deviation)</option>
+                    <option value="variance">Variance</option>
+                    <option value="stdDev">Standard Deviation</option>
+                    <option value="cv">Coefficient of Variation</option>
+                    <!--
+                    <option disabled="disabled">Following function might not make sense (like sum) but are included for completeness, further tests and other datasets</option>
+                    <option value="sum">Sum</option>
+                    <option value="variance">Variance</option>
+                    <option value="stdDev">Standard Deviation</option>
+                    <option value="range">Range</option>
+                    <option value="q1">First Quartile (Q1)</option>
+                    <option value="q3">Third Quartile (Q3)</option>
+                    <option value="iqr">Interquartile Range (IQR)</option>
+                    <option value="coefVar">Coefficient of Variation</option>
+                    <option value="skewness">Skewness</option>
+                    <option value="kurtosis">Kurtosis</option>
+                    <option value="harmonicMean">Harmonic Mean</option>
+                    <option value="geometricMean">Geometric Mean</option>
+                    <option value="mad">Mean Absolute Deviation (MAD)</option>
+                    <option value="gini">Gini Coefficient</option>
+                    <option value="entropy">Shannon Entropy</option>
+                    <option value="zScores">Z-Scores</option>
+                    <option value="moment3">3rd Central Moment</option>
+                    <option value="moment4">4th Central Moment</option>
+                    <option value="mse">Mean Squared Error (MSE)</option>
+                    <option value="coefficientOfDispersion">Coefficient of Dispersion</option>
+                    <option value="percentiles">Percentile Range (10th - 90th)</option>
+                    -->
+                </select>
+                </div>
+
+            </details>
+            <br>
+
+
+            <details open="">
+                <summary>Facebook | Instagram (click hexbin)</summary>
+                <div id="locations"></div>
+            </details>
+            <br>
+            <details open="">
+                <summary>Overturemaps Categories</summary>
+                <div id="categories"></div>
+            </details>
+            </details>
+
+        </div>
+    </div>
+
+</body>
+
+</html>
