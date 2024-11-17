@@ -438,7 +438,7 @@ $(document).ready(function () {
 
                 // experimental, searching for "homogenous areas"
                 // Range
-                const rangeScore = Math.max(...scores) - Math.min(...scores);
+                const rangeScore = maxScore - minScore;
                 const madScore = scores.reduce((sum, score) => sum + Math.abs(score - meanScore), 0) / scores.length; // Mean Absolute Deviation (MAD)
                 const varianceScore = scores.reduce((sum, score) => sum + (score - meanScore) ** 2, 0) / scores.length;// Standard Deviation
                 const stdDevScore = Math.sqrt(varianceScore);
